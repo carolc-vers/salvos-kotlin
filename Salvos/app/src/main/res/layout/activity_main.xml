@@ -87,5 +87,6 @@
         android:layout_below="@id/app_bar"
         android:background="@color/white"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="5"
         tools:listitem="@layout/salvo_item" />
 </RelativeLayout>
