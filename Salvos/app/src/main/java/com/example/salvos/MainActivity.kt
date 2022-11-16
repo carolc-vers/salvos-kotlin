@@ -23,6 +23,26 @@ class MainActivity : AppCompatActivity() {
         configurarRecyclerView()
     }
 
+    inner class ItemTouchHelper(dragDirs: Int, swipeDirs: Int): androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback(
+        dragDirs, swipeDirs
+    ){
+        
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
+            val from:Int = viewHolder.adapterPosition
+            val to:Int = target.adapterPosition
+
+
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            TODO("Not yet implemented")
+        }
+    }
+
     private fun configurarRecyclerView() {
         val salvos = listOf(
             Salvo("Segunda via do bilhete único", "Perdi meu bilhete e não estou conseguindo pedir outro", "12 de nov"),
