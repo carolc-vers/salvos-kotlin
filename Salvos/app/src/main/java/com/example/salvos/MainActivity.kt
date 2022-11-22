@@ -15,6 +15,8 @@ import java.util.Collections
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    val recyclerContainer = binding.recyclerViewSalvos
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -27,7 +29,6 @@ class MainActivity : AppCompatActivity() {
                     androidx.recyclerview.widget.ItemTouchHelper.LEFT)
         )
 
-        val recyclerContainer = binding.recyclerViewSalvos
         helper.attachToRecyclerView(recyclerContainer)
     }
 
@@ -43,17 +44,19 @@ class MainActivity : AppCompatActivity() {
             val from:Int = viewHolder.adapterPosition
             val to:Int = target.adapterPosition
 
-            Collections.swap(listOf(SalvoAdapter(mutableListOf())), from, to)
-            SalvoAdapter(mutableListOf()).notifyItemMoved(from, to)
+            Collections.swap(listOf(SalvoAdapter(listOf())), from, to)
 
+            Collections.swap(listOf(recyclerView.adapter), from, to)
+            recyclerContainer.adapter?.notifyItemMoved(from, to)
             return true;
         }
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-            TODO("Not yet implemented")
+
         }
     }
 
+    //Tentar colocar essa função dentro da Main
     private fun configurarRecyclerView() {
         val salvos = listOf(
             Salvo("Segunda via do bilhete único", "Perdi meu bilhete e não estou conseguindo pedir outro", "12 de nov"),
@@ -67,10 +70,12 @@ class MainActivity : AppCompatActivity() {
         val recyclerContainer = binding.recyclerViewSalvos
         recyclerContainer.layoutManager = LinearLayoutManager(baseContext)
 
+        //Criar uma variável pra isso aqui para ser utilizada na função de 'itemTouchHelper'
         recyclerContainer.adapter = SalvoAdapter(salvos)
     }
 }
 
+//Construtor da classe
 class SalvoAdapter(
     private val salvos: List<Salvo>) : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
