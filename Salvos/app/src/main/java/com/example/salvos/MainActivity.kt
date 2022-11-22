@@ -6,12 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.salvos.databinding.ActivityMainBinding
-import org.w3c.dom.Text
+import java.util.Collections
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,12 +20,21 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         configurarRecyclerView()
+
+        val helper = androidx.recyclerview.widget.ItemTouchHelper(ItemTouchHelper(
+            androidx.recyclerview.widget.ItemTouchHelper.UP or
+                    androidx.recyclerview.widget.ItemTouchHelper.DOWN,
+                    androidx.recyclerview.widget.ItemTouchHelper.LEFT)
+        )
+
+        val recyclerContainer = binding.recyclerViewSalvos
+        helper.attachToRecyclerView(recyclerContainer)
     }
 
     inner class ItemTouchHelper(dragDirs: Int, swipeDirs: Int): androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback(
         dragDirs, swipeDirs
     ){
-        
+
         override fun onMove(
             recyclerView: RecyclerView,
             viewHolder: RecyclerView.ViewHolder,
@@ -35,7 +43,10 @@ class MainActivity : AppCompatActivity() {
             val from:Int = viewHolder.adapterPosition
             val to:Int = target.adapterPosition
 
+            Collections.swap(listOf(SalvoAdapter(mutableListOf())), from, to)
+            SalvoAdapter(mutableListOf()).notifyItemMoved(from, to)
 
+            return true;
         }
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -56,19 +67,13 @@ class MainActivity : AppCompatActivity() {
         val recyclerContainer = binding.recyclerViewSalvos
         recyclerContainer.layoutManager = LinearLayoutManager(baseContext)
 
-        recyclerContainer.adapter = SalvoAdapter(
-            salvos
-        ){ mensagem -> Toast.makeText(
-            baseContext,
-            mensagem,
-            Toast.LENGTH_LONG
-        ).show() }
+        recyclerContainer.adapter = SalvoAdapter(salvos)
     }
 }
 
 class SalvoAdapter(
-    private val salvos: List<Salvo>,
-    private val onclick: (mensagem: String) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+    private val salvos: List<Salvo>) : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+
 
     inner class SalvoHolder(
         private val itemView: View) :
@@ -84,8 +89,9 @@ class SalvoAdapter(
             tvDescricao.text = salvo.descricao_publicacao
             tvData.text = salvo.date
 
+            //Abrir segunda tela de Salvos onde está efetivamente o conteúdo da publicação que foi salva
             cvSalvo.setOnClickListener{
-                onclick("Você clicou no card X")
+
             }
         }
     }
